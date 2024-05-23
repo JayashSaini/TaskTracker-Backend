@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "concurrently \"npm:watch\" \"nodemon --watch dist --exec 'node dist/index.js'\"",
+    "dev": "concurrently \"npm run watch\" \"nodemon --watch dist --exec 'node  -r dotenv/config dist/index.js'\"",
     "watch": "tsc --watch"
   },
   "repository": {
@@ -36,6 +36,8 @@
   "dependencies": {
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "mongoose": "^8.4.0"
+    "mongoose": "^8.4.0",
+    "mysql2": "^3.9.7",
+    "sequelize": "^6.37.3"
   }
 }

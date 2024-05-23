@@ -1,10 +1,10 @@
-import dotenv from "dotenv";
-dotenv.config({
-  path: "./.env",
-});
 import { app, startApp } from "./app.js";
+import connectToDatabase from "./db/index.js";
 
-(() => {
+(async () => {
+  // connect to my sql database
+  await connectToDatabase();
+
   // running App
   startApp();
 
