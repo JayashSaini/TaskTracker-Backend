@@ -1,8 +1,18 @@
 import express from "express";
 import { errorHandler } from "./middlewares/error.middlewares.js";
+import todoRouter from "./routes/todo.routes.js";
+import cors from "cors";
 const app = express();
 
 function startApp() {
+  app.use(
+    cors({
+      origin: "*",
+      credentials: true,
+      methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    })
+  );
+
   app.use(
     express.json({
       limit: "50mb",
@@ -17,6 +27,9 @@ function startApp() {
     })
   );
 
+  app.use("/api/v1/todo", todoRouter);
+
+  // Implemented error handling middleware
   app.use(errorHandler);
 }
 

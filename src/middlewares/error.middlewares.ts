@@ -15,7 +15,7 @@ const errorHandler = function (
       error.statusCode || (error instanceof sequelize.Error ? 400 : 500);
     const message = error.message || "Something went wrong";
 
-    error = new ApiError(statusCode, message, false);
+    error = new ApiError(statusCode, message, {}, false);
   }
 
   // Now we are sure that the `error` variable will be an instance of ApiError class

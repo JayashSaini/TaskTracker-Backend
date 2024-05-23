@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/JayashSaini/Todo-Backend#readme",
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "concurrently": "^8.2.2",
     "nodemon": "^3.1.0",
@@ -34,8 +35,10 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-validator": "^7.1.0",
     "mongoose": "^8.4.0",
     "mysql2": "^3.9.7",
     "sequelize": "^6.37.3"
