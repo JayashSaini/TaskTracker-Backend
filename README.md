@@ -25,7 +25,7 @@ cd todo-backend
 npm install
 ```
 
-3. Set up environment variables. Create a [.env](./.env-sample)
+3. Set up environment variables. Create a [.env](./.env.sample)
    file in the root directory and add the following:
 
 4. Run Application:

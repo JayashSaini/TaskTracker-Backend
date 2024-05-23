@@ -1,0 +1,37 @@
+{
+  "name": "todo",
+  "version": "1.0.0",
+  "description": "Advanced Node.js to-do app with MySQL backend",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "npx nodemon --watch src --exec 'npm run watch'",
+    "watch": "tsc -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JayashSaini/Todo-Backend.git"
+  },
+  "keywords": [
+    "Typescript",
+    "Redis",
+    "Node.js",
+    "Mysql"
+  ],
+  "author": "Jayash Saini",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JayashSaini/Todo-Backend/issues"
+  },
+  "homepage": "https://github.com/JayashSaini/Todo-Backend#readme",
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.4.0"
+  }
+}
