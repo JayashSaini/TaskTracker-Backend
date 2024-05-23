@@ -1,4 +1,5 @@
 import express from "express";
+import { errorHandler } from "./middlewares/error.middlewares.js";
 const app = express();
 
 function startApp() {
@@ -15,6 +16,8 @@ function startApp() {
       type: "application/x-www-form-urlencoded",
     })
   );
+
+  app.use(errorHandler);
 }
 
 export { app, startApp };
