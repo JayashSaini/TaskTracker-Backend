@@ -5,3 +5,5 @@ class ApiError {
     public success: boolean = false
   ) {}
 }
+
+export default ApiError;

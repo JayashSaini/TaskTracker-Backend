@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
-async function asyncHandler(
+function asyncHandler(
   queryFunction: (
     req: Request,
     res: Response,
