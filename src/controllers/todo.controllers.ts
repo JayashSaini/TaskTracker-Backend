@@ -17,4 +17,18 @@ const createTodo = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, todo, "Todo created successfully", true));
 });
 
-export { createTodo };
+const getTodoById = asyncHandler(async (req, res) => {
+  const { todoId } = req.params;
+
+  const todo = await Todo.findByPk(todoId);
+
+  if (!todo) {
+    throw new ApiError(404, "Todo not found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, todo, "Todo found successfully", true));
+});
+
+export { createTodo, getTodoById };
