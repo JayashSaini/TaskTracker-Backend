@@ -4,6 +4,7 @@ import {
   getAllTodos,
   getTodoById,
   updateTodo,
+  deleteTodoById,
 } from "../controllers/todo.controllers.js";
 import {
   createTodoValidator,
@@ -17,6 +18,7 @@ router.route("/").get(getAllTodos).post(createTodoValidator, createTodo);
 router
   .route("/:todoId")
   .get(getTodoById)
-  .patch(updateTodoValidator, updateTodo);
+  .patch(updateTodoValidator, updateTodo)
+  .delete(deleteTodoById);
 
 export default router;
