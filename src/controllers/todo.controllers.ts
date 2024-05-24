@@ -90,4 +90,23 @@ const deleteTodoById = asyncHandler(async (req, res) => {
     );
 });
 
-export { createTodo, getTodoById, getAllTodos, updateTodo, deleteTodoById };
+const deleteAllTodos = asyncHandler(async (req, res) => {
+  const deletedTodos = await Todo.destroy({
+    where: {},
+  });
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, { deletedTodos }, "Todos Deleted successfully", true)
+    );
+});
+
+export {
+  createTodo,
+  getTodoById,
+  getAllTodos,
+  updateTodo,
+  deleteTodoById,
+  deleteAllTodos,
+};

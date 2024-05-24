@@ -5,6 +5,7 @@ import {
   getTodoById,
   updateTodo,
   deleteTodoById,
+  deleteAllTodos,
 } from "../controllers/todo.controllers.js";
 import {
   createTodoValidator,
@@ -13,7 +14,11 @@ import {
 
 const router = Router();
 
-router.route("/").get(getAllTodos).post(createTodoValidator, createTodo);
+router
+  .route("/")
+  .get(getAllTodos)
+  .post(createTodoValidator, createTodo)
+  .delete(deleteAllTodos);
 
 router
   .route("/:todoId")
