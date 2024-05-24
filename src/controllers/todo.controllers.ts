@@ -3,6 +3,15 @@ import ApiResponse from "../utils/ApiResponse.js";
 import ApiError from "../utils/ApiError.js";
 import Todo from "../models/todo.models.js";
 
+interface Todo {
+  id: number;
+  title: string;
+  description: string;
+  isCompleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 const createTodo = asyncHandler(async (req, res) => {
   const todo = await Todo.create({
     title: req.body.title,
@@ -102,6 +111,23 @@ const deleteAllTodos = asyncHandler(async (req, res) => {
     );
 });
 
+const toggleTodoIsCompleted = asyncHandler(async (req, res) => {
+  const { todoId } = req.params;
+
+  const todo: Todo | any = await Todo.findByPk(todoId);
+
+  if (!todo) {
+    throw new ApiError(404, "Todo not found");
+  }
+
+  const updatedTodo = await todo.update({
+    isCompleted: !todo.isCompleted,
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, updatedTodo, "Todo updated successfully", true));
+});
 export {
   createTodo,
   getTodoById,
@@ -109,4 +135,5 @@ export {
   updateTodo,
   deleteTodoById,
   deleteAllTodos,
+  toggleTodoIsCompleted,
 };

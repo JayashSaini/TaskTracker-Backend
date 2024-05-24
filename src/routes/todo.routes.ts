@@ -6,6 +6,7 @@ import {
   updateTodo,
   deleteTodoById,
   deleteAllTodos,
+  toggleTodoIsCompleted,
 } from "../controllers/todo.controllers.js";
 import {
   createTodoValidator,
@@ -25,5 +26,7 @@ router
   .get(getTodoById)
   .patch(updateTodoValidator, updateTodo)
   .delete(deleteTodoById);
+
+router.route("/toggle/:todoId").patch(toggleTodoIsCompleted);
 
 export default router;
