@@ -31,4 +31,45 @@ const getTodoById = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, todo, "Todo found successfully", true));
 });
 
-export { createTodo, getTodoById };
+const getAllTodos = asyncHandler(async (req, res) => {
+  const todos = await Todo.findAll();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, todos, "Todos found successfully", true));
+});
+
+const updateTodo = asyncHandler(async (req, res) => {
+  const { todoId } = req.params;
+  const { title, description } = req.body;
+
+  if (!(title || description)) {
+    throw new ApiError(404, "Atleast one of title, description is required");
+  }
+
+  const todo = await Todo.findByPk(todoId);
+
+  if (!todo) {
+    throw new ApiError(404, "Todo not found");
+  }
+
+  interface updateTodoData {
+    title?: string;
+    description?: string;
+  }
+
+  let data: updateTodoData = {};
+  if (title) data.title = title;
+  if (description) data.description = description;
+
+  const updatedTodo = await todo.update({
+    title,
+    description,
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, updatedTodo, "Todo updated successfully", true));
+});
+
+export { createTodo, getTodoById, getAllTodos, updateTodo };

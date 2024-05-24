@@ -3,6 +3,7 @@ import validate from "./validate.js";
 
 const title = () =>
   body("title")
+    .optional()
     .isString()
     .withMessage("Title must be defined of type string.")
     .trim()
@@ -11,6 +12,7 @@ const title = () =>
 
 const description = () =>
   body("description")
+    .optional()
     .isString()
     .withMessage("Todo Desciption must be of type string.");
 
