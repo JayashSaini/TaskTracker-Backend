@@ -1,16 +1,26 @@
-import { Model, DataTypes } from "sequelize";
+// Import necessary modules from Sequelize
+import { Model, DataTypes, Optional } from "sequelize";
 import bcryptjs from "bcryptjs";
-import { sequelize } from "../db/index.js";
+import { sequelize } from "../db/index.js"; // Adjust the import path as needed
 
-interface UserInstance extends Model {
+interface UserAttributes {
   id: number;
   username: string;
   password: string;
   email: string;
-  role: "USER" | "ADMIN";
-  accessToken: string | null;
-  createdAt: Date;
-  updatedAt: Date;
+  role?: "USER" | "ADMIN";
+  accessToken?: string | null;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+interface UserCreationAttributes
+  extends Optional<UserAttributes, "id" | "accessToken"> {}
+
+export interface UserInstance
+  extends Model<UserAttributes, UserCreationAttributes>,
+    UserAttributes {
+  // You can define additional custom methods for your model here
 }
 
 const User = sequelize.define<UserInstance>(
@@ -41,8 +51,18 @@ const User = sequelize.define<UserInstance>(
     },
     accessToken: {
       type: DataTypes.STRING,
-      defaultValue: null,
       allowNull: true,
+      defaultValue: null,
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
     },
   },
   {

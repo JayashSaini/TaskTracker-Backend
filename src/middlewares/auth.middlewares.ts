@@ -37,3 +37,5 @@ const verifyJWT = asyncHandler(
     }
   }
 );
+
+export { verifyJWT };

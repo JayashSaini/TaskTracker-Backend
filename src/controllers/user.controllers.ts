@@ -1,9 +1,9 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
-import User from "../models/user.models.js";
+import User, { UserInstance } from "../models/user.models.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 
-const register = asyncHandler(async (req, res) => {
+const register = asyncHandler(async (req, res, next) => {
   const { username, password, email } = req.body;
 
   const existingUserName = await User.findOne({
@@ -20,12 +20,15 @@ const register = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Email already exists");
   }
 
-  const user = await User.create({ username, password, email });
+  const user: UserInstance = await User.create({ username, password, email });
 
   if (!user) {
     throw new ApiError(400, "User not created");
   }
-  return res.status(200);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "User registered successfully", true));
 });
 
 export { register };
