@@ -3,6 +3,7 @@ import { errorHandler } from "./middlewares/error.middlewares.js";
 import todoRouter from "./routes/todo.routes.js";
 import userRouter from "./routes/user.routes.js";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 const app = express();
 
 function startApp() {
@@ -27,6 +28,8 @@ function startApp() {
       type: "application/x-www-form-urlencoded",
     })
   );
+
+  app.use(cookieParser());
 
   app.use("/api/v1/todo", todoRouter);
   app.use("/api/v1/user", userRouter);
