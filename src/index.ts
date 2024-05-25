@@ -1,7 +1,11 @@
 import { app, startApp } from "./app.js";
 import connectToDatabase from "./db/index.js";
+import { startRedis } from "./config/redis.config.js";
 
 (async () => {
+  // connect to redis database
+  await startRedis();
+
   // connect to my sql database
   await connectToDatabase();
 
