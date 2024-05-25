@@ -8,7 +8,7 @@ import connectToDatabase from "./db/index.js";
   // running App
   startApp();
 
-  app.listen(process.env.PORT, () => {
+  app.listen(Number(process.env.PORT), () => {
     console.log(`🌍 Server is running on port ${process.env.PORT}`);
   });
 })();

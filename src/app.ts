@@ -1,6 +1,7 @@
 import express from "express";
 import { errorHandler } from "./middlewares/error.middlewares.js";
 import todoRouter from "./routes/todo.routes.js";
+import userRouter from "./routes/user.routes.js";
 import cors from "cors";
 const app = express();
 
@@ -28,6 +29,7 @@ function startApp() {
   );
 
   app.use("/api/v1/todo", todoRouter);
+  app.use("/api/v1/user", userRouter);
 
   // Implemented error handling middleware
   app.use(errorHandler);
