@@ -12,8 +12,12 @@ import {
   createTodoValidator,
   updateTodoValidator,
 } from "../validators/todo.validate.js";
+import { verifyJWT } from "../middlewares/auth.middlewares.js";
 
 const router = Router();
+
+// secure routes
+router.use(verifyJWT);
 
 router
   .route("/")

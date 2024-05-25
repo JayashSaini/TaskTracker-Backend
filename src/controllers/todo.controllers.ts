@@ -2,6 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import ApiError from "../utils/ApiError.js";
 import Todo from "../models/todo.models.js";
+import { where } from "sequelize";
 
 interface Todo {
   id: number;
@@ -13,17 +14,22 @@ interface Todo {
 }
 
 const createTodo = asyncHandler(async (req, res) => {
-  const todo = await Todo.create({
-    title: req.body.title,
-    description: req.body.description,
-    isCompleted: req.body.isCompleted,
-  });
-  if (!todo) {
-    throw new ApiError(400, "Todo not created");
+  try {
+    const todo = await Todo.create({
+      title: req.body.title,
+      description: req.body.description,
+      isCompleted: req.body.isCompleted,
+      userId: req.user?.id,
+    });
+    if (!todo) {
+      throw new ApiError(400, "Todo not created");
+    }
+    return res
+      .status(201)
+      .json(new ApiResponse(201, todo, "Todo created successfully", true));
+  } catch (error) {
+    console.log("err : ", error);
   }
-  return res
-    .status(201)
-    .json(new ApiResponse(201, todo, "Todo created successfully", true));
 });
 
 const getTodoById = asyncHandler(async (req, res) => {
@@ -41,7 +47,7 @@ const getTodoById = asyncHandler(async (req, res) => {
 });
 
 const getAllTodos = asyncHandler(async (req, res) => {
-  const todos = await Todo.findAll();
+  const todos = await Todo.findAll({ where: { userId: req.user?.id } });
 
   return res
     .status(200)
@@ -56,7 +62,12 @@ const updateTodo = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Atleast one of title, description is required");
   }
 
-  const todo = await Todo.findByPk(todoId);
+  const todo = await Todo.findOne({
+    where: {
+      userId: req.user?.id,
+      id: todoId,
+    },
+  });
 
   if (!todo) {
     throw new ApiError(404, "Todo not found");
@@ -84,7 +95,12 @@ const updateTodo = asyncHandler(async (req, res) => {
 const deleteTodoById = asyncHandler(async (req, res) => {
   const { todoId } = req.params;
 
-  const todo = await Todo.findByPk(todoId);
+  const todo = await Todo.findOne({
+    where: {
+      userId: req.user?.id,
+      id: todoId,
+    },
+  });
 
   if (!todo) {
     throw new ApiError(404, "Todo not found");
@@ -101,7 +117,9 @@ const deleteTodoById = asyncHandler(async (req, res) => {
 
 const deleteAllTodos = asyncHandler(async (req, res) => {
   const deletedTodos = await Todo.destroy({
-    where: {},
+    where: {
+      userId: req.user?.id,
+    },
   });
 
   return res
@@ -114,7 +132,12 @@ const deleteAllTodos = asyncHandler(async (req, res) => {
 const toggleTodoIsCompleted = asyncHandler(async (req, res) => {
   const { todoId } = req.params;
 
-  const todo: Todo | any = await Todo.findByPk(todoId);
+  const todo: Todo | any = await Todo.findOne({
+    where: {
+      id: todoId,
+      userId: req.user?.id,
+    },
+  });
 
   if (!todo) {
     throw new ApiError(404, "Todo not found");
@@ -128,6 +151,7 @@ const toggleTodoIsCompleted = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, updatedTodo, "Todo updated successfully", true));
 });
+
 export {
   createTodo,
   getTodoById,

@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../db/index.js";
+import User from "./user.models.js";
 
 const Todo = sequelize.define(
   "Todo",
@@ -18,10 +19,15 @@ const Todo = sequelize.define(
       allowNull: false,
       defaultValue: false,
     },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   },
   {
     timestamps: true,
   }
 );
+User.hasOne(Todo, { foreignKey: "userId" });
 
 export default Todo;
