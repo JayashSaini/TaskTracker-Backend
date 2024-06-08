@@ -8,5 +8,6 @@ declare namespace NodeJS {
     DB_NAME: string;
     ACCESSTOKEN_SECRET: string;
     ACCESSTOKEN_EXPIRY: string;
+    CORS_ORIGIN: string;
   }
 }

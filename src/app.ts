@@ -9,7 +9,7 @@ const app = express();
 function startApp() {
   app.use(
     cors({
-      origin: "*",
+      origin: process.env.CORS_ORIGIN,
       credentials: true,
       methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     })
