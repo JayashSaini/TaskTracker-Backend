@@ -7,11 +7,10 @@ import { NextFunction, Response, Request } from "express";
 const verifyJWT = asyncHandler(
   async (req: Request, _: Response, next: NextFunction) => {
     const token =
-      req.cookies?.accessToken ||
-      req.header("Authorization")?.replace("Bearer", "");
+      req.cookies?.token || req.header("Authorization")?.replace("Bearer", "");
 
     if (!token) {
-      throw new ApiError(401, " Unauthorized request");
+      throw new ApiError(401, "Unauthorized request");
     }
 
     try {
