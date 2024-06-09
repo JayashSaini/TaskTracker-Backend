@@ -2,6 +2,10 @@
 
 This is a backend application for a Todo app built with TypeScript, Node.js, Express.js, MySQL, and Redis.
 
+## Frontend
+
+Github Repository - [Todo Frontend](https://github.com/JayashSaini/Todo-Frontend)
+
 ## Tech Stack
 
 - TypeScript
