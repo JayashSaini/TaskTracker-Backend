@@ -5,6 +5,11 @@ import User from "./user.models.js";
 const Todo = sequelize.define(
   "Todo",
   {
+    id: {
+      primaryKey: true,
+      type: DataTypes.INTEGER.UNSIGNED,
+      autoIncrement: true,
+    },
     title: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -20,14 +25,23 @@ const Todo = sequelize.define(
       defaultValue: false,
     },
     userId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED, // Ensure this matches the User model's id type
       allowNull: false,
+      references: {
+        model: User,
+        key: "id",
+      },
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
     },
   },
   {
     timestamps: true,
   }
 );
+
+// Update the association
 User.hasOne(Todo, { foreignKey: "userId" });
+Todo.belongsTo(User, { foreignKey: "userId" });
 
 export default Todo;
