@@ -1,6 +1,6 @@
-# Todo Backend App
+# TaskTracker Backend
 
-This is a backend application for a Todo app built with TypeScript, Node.js, Express.js, MySQL, and Redis.
+This is a backend application for a Task managing app built with TypeScript, Node.js, Express.js, MySQL, and Redis.
 
 ## Frontend
 
