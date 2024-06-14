@@ -4,7 +4,7 @@ This is a backend application for a Task managing app built with TypeScript, Nod
 
 ## Frontend
 
-Github Repository - [Todo Frontend](https://github.com/JayashSaini/Todo-Frontend)
+Github Repository - [TaskTracker](https://github.com/JayashSaini/TaskTracker-Frontend)
 
 ## Tech Stack
 
