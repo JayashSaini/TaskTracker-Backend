@@ -1,4 +1,4 @@
-import { UserInstance } from "../models/user.models.ts";
+import { UserInstance } from "../models/mongodb/user.models.ts";
 
 declare global {
   namespace Express {

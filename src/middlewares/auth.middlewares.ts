@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
-import User from "../models/mongodb/user.models.js";
+import User, { UserInstance } from "../models/mongodb/user.models.js";
 import { NextFunction, Response, Request } from "express";
 
 const verifyJWT = asyncHandler(
@@ -19,7 +19,7 @@ const verifyJWT = asyncHandler(
         process.env.ACCESSTOKEN_SECRET
       );
 
-      const user = await User.findById(decodedToken?.id, {
+      const user: UserInstance | null = await User.findById(decodedToken?.id, {
         attributes: {
           exclude: ["password", "createdAt", "updatedAt"],
         },

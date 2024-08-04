@@ -18,7 +18,7 @@ const createTodo = asyncHandler(async (req, res) => {
     title: req.body.title,
     description: req.body.description,
     isCompleted: req.body.isCompleted,
-    userId: req.user?.id,
+    userId: req.user?._id,
   });
 
   await todo.save();

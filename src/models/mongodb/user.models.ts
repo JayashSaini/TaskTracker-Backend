@@ -3,6 +3,17 @@ import bcrypt from "bcryptjs";
 
 const { Schema, model } = mongoose;
 
+export interface UserInstance {
+  _id: number;
+  username: string;
+  password: string;
+  email: string;
+  role?: "USER" | "ADMIN";
+  accessToken?: string | null;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 // Define the User schema
 const userSchema = new Schema(
   {
