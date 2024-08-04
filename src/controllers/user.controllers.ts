@@ -1,5 +1,5 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
-import User, { UserInstance } from "../models/user.models.js";
+import User from "../models/mongodb/user.models.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import bcryptjs from "bcryptjs";
@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 
 const generateAccessToken = async (userId: any) => {
   try {
-    const user: UserInstance | null = await User.findByPk(userId);
+    const user = await User.findById(userId);
 
     if (!user) {
       throw new ApiError(404, "User not found");
@@ -31,7 +31,10 @@ const generateAccessToken = async (userId: any) => {
 
     return accessToken;
   } catch (error) {
-    throw new ApiError(400, "Something went while generating access token");
+    throw new ApiError(
+      400,
+      "Something went wrong while generating access token"
+    );
   }
 };
 
@@ -43,25 +46,18 @@ const options = {
 const register = asyncHandler(async (req, res, next) => {
   const { username, password, email } = req.body;
 
-  const existingUserName = await User.findOne({
-    where: { username: username },
-  });
+  const existingUserName = await User.findOne({ username });
   if (existingUserName) {
     throw new ApiError(400, "Username already exists");
   }
 
-  const existingEmail = await User.findOne({
-    where: { email: email },
-  });
+  const existingEmail = await User.findOne({ email });
   if (existingEmail) {
     throw new ApiError(400, "Email already exists");
   }
 
-  const user: UserInstance = await User.create({ username, password, email });
-
-  if (!user) {
-    throw new ApiError(400, "User not created");
-  }
+  const user = new User({ username, password, email });
+  await user.save();
 
   return res
     .status(200)
@@ -71,9 +67,7 @@ const register = asyncHandler(async (req, res, next) => {
 const login = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
 
-  const user = await User.findOne({
-    where: { username: username },
-  });
+  const user = await User.findOne({ username });
 
   if (!user) {
     throw new ApiError(400, "User not found");
@@ -85,22 +79,23 @@ const login = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid password");
   }
 
-  const accessToken = await generateAccessToken(user?.id);
+  const accessToken = await generateAccessToken(user._id);
 
   if (!accessToken) {
-    throw new ApiError(400, "Something went while generating access token");
+    throw new ApiError(
+      400,
+      "Something went wrong while generating access token"
+    );
   }
-
-  const loginUser = await User.findByPk(user?.id);
 
   return res
     .status(200)
     .cookie("token", accessToken, options)
-    .json(new ApiResponse(200, loginUser, "User logged in successfully", true));
+    .json(new ApiResponse(200, user, "User logged in successfully", true));
 });
 
 const logout = asyncHandler(async (req, res) => {
-  const user: UserInstance | null = await User.findByPk(req.user?.id);
+  const user = await User.findById(req.user?._id);
 
   if (!user) {
     throw new ApiError(404, "User not found");
@@ -116,7 +111,7 @@ const logout = asyncHandler(async (req, res) => {
 });
 
 const getSelf = asyncHandler(async (req, res) => {
-  const user: UserInstance | null = await User.findByPk(req.user?.id);
+  const user = await User.findById(req.user?._id);
 
   if (!user) {
     throw new ApiError(404, "User not found");
@@ -129,7 +124,7 @@ const getSelf = asyncHandler(async (req, res) => {
 
 const getUserById = asyncHandler(async (req, res) => {
   const { userId } = req.params;
-  const user: UserInstance | null = await User.findByPk(userId);
+  const user = await User.findById(userId);
 
   if (!user) {
     throw new ApiError(404, "User not found");
@@ -141,7 +136,7 @@ const getUserById = asyncHandler(async (req, res) => {
 });
 
 const getAllUsers = asyncHandler(async (req, res) => {
-  const users = await User.findAll();
+  const users = await User.find();
 
   return res
     .status(200)
@@ -151,7 +146,7 @@ const getAllUsers = asyncHandler(async (req, res) => {
 const updatePassword = asyncHandler(async (req, res) => {
   const { oldPassword, newPassword } = req.body;
 
-  const user: UserInstance | null = await User.findByPk(req?.user?.id);
+  const user = await User.findById(req?.user?._id);
 
   if (!user) {
     throw new ApiError(404, "User not found");
@@ -167,17 +162,10 @@ const updatePassword = asyncHandler(async (req, res) => {
 
   await user.save();
 
-  const updatePassword = await User.findByPk(user.id);
-
   return res
     .status(200)
     .json(
-      new ApiResponse(
-        200,
-        updatePassword,
-        "User password updated successfully",
-        true
-      )
+      new ApiResponse(200, user, "User password updated successfully", true)
     );
 });
 

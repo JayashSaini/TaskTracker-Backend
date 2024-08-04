@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import { sequelize } from "../db/index.js";
+import { sequelize } from "../../db/mysql.js";
 import User from "./user.models.js";
 
 const Todo = sequelize.define(

@@ -1,7 +1,7 @@
 // Import necessary modules from Sequelize
 import { Model, DataTypes, Optional } from "sequelize";
 import bcryptjs from "bcryptjs";
-import { sequelize } from "../db/index.js"; // Adjust the import path as needed
+import { sequelize } from "../../db/mysql.js"; // Adjust the import path as needed
 
 interface UserAttributes {
   id: number;

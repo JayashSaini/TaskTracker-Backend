@@ -1,11 +1,11 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import ApiError from "../utils/ApiError.js";
-import Todo from "../models/todo.models.js";
+import Todo from "../models/mongodb/todo.models.js";
 import { redis } from "../config/redis.config.js";
 
 interface Todo {
-  id: number;
+  _id: string;
   title: string;
   description: string;
   isCompleted: boolean;
@@ -14,15 +14,15 @@ interface Todo {
 }
 
 const createTodo = asyncHandler(async (req, res) => {
-  const todo = await Todo.create({
+  const todo = new Todo({
     title: req.body.title,
     description: req.body.description,
     isCompleted: req.body.isCompleted,
     userId: req.user?.id,
   });
-  if (!todo) {
-    throw new ApiError(400, "Todo not created");
-  }
+
+  await todo.save();
+
   return res
     .status(201)
     .json(new ApiResponse(201, todo, "Todo created successfully", true));
@@ -41,7 +41,7 @@ const getTodoById = asyncHandler(async (req, res) => {
   }
 
   // If the todo is not cached, fetch it from the database
-  const todo = await Todo.findByPk(todoId);
+  const todo = await Todo.findById(todoId);
 
   if (!todo) {
     throw new ApiError(404, "Todo not found");
@@ -57,7 +57,7 @@ const getTodoById = asyncHandler(async (req, res) => {
 
 const getAllTodos = asyncHandler(async (req, res) => {
   // Check if todos are cached in Redis
-  const cachedTodos = await redis.get(`todos:${req.user?.id}`);
+  const cachedTodos = await redis.get(`todos:${req.user?._id}`);
   if (cachedTodos) {
     const todos = JSON.parse(cachedTodos);
     return res
@@ -66,10 +66,10 @@ const getAllTodos = asyncHandler(async (req, res) => {
   }
 
   // If todos are not cached, fetch them from the database
-  const todos = await Todo.findAll({ where: { userId: req.user?.id } });
+  const todos = await Todo.find({ userId: req.user?._id });
 
   // Cache the fetched todos in Redis with expiry of 60 seconds
-  await redis.set(`todos:${req.user?.id}`, JSON.stringify(todos), "EX", 60);
+  await redis.set(`todos:${req.user?._id}`, JSON.stringify(todos), "EX", 60);
 
   // Return the fetched todos
   return res
@@ -82,33 +82,31 @@ const updateTodo = asyncHandler(async (req, res) => {
   const { title, description } = req.body;
 
   if (!(title || description)) {
-    throw new ApiError(404, "Atleast one of title, description is required");
+    throw new ApiError(400, "At least one of title or description is required");
   }
 
   const todo = await Todo.findOne({
-    where: {
-      userId: req.user?.id,
-      id: todoId,
-    },
+    userId: req.user?._id,
+    _id: todoId,
   });
 
   if (!todo) {
     throw new ApiError(404, "Todo not found");
   }
 
-  interface updateTodoData {
-    title?: string;
-    description?: string;
-  }
+  const updateData: any = {};
+  if (title) updateData.title = title;
+  if (description) updateData.description = description;
 
-  let data: updateTodoData = {};
-  if (title) data.title = title;
-  if (description) data.description = description;
-
-  const updatedTodo = await todo.update({
-    title,
-    description,
-  });
+  const updatedTodo = await Todo.findByIdAndUpdate(
+    todo._id,
+    {
+      $set: updateData,
+    },
+    {
+      new: true,
+    }
+  );
 
   return res
     .status(200)
@@ -118,57 +116,55 @@ const updateTodo = asyncHandler(async (req, res) => {
 const deleteTodoById = asyncHandler(async (req, res) => {
   const { todoId } = req.params;
 
-  const todo = await Todo.findOne({
-    where: {
-      userId: req.user?.id,
-      id: todoId,
-    },
+  const todo = await Todo.findOneAndDelete({
+    userId: req.user?._id,
+    _id: todoId,
   });
 
   if (!todo) {
     throw new ApiError(404, "Todo not found");
   }
 
-  const deletedTodo = await todo.destroy();
-
   return res
     .status(200)
-    .json(
-      new ApiResponse(200, { deletedTodo }, "Todo Deleted successfully", true)
-    );
+    .json(new ApiResponse(200, { todo }, "Todo deleted successfully", true));
 });
 
 const deleteAllTodos = asyncHandler(async (req, res) => {
-  const deletedTodos = await Todo.destroy({
-    where: {
-      userId: req.user?.id,
-    },
+  const deletedTodos = await Todo.deleteMany({
+    userId: req.user?._id,
   });
 
   return res
     .status(200)
     .json(
-      new ApiResponse(200, { deletedTodos }, "Todos Deleted successfully", true)
+      new ApiResponse(200, { deletedTodos }, "Todos deleted successfully", true)
     );
 });
 
 const toggleTodoIsCompleted = asyncHandler(async (req, res) => {
   const { todoId } = req.params;
 
-  const todo: Todo | any = await Todo.findOne({
-    where: {
-      id: todoId,
-      userId: req.user?.id,
-    },
+  const todo = await Todo.findOne({
+    _id: todoId,
+    userId: req.user?._id,
   });
 
   if (!todo) {
     throw new ApiError(404, "Todo not found");
   }
 
-  const updatedTodo = await todo.update({
-    isCompleted: !todo.isCompleted,
-  });
+  const updatedTodo = await Todo.findByIdAndUpdate(
+    todo._id,
+    {
+      $set: {
+        isCompleted: !todo.isCompleted,
+      },
+    },
+    {
+      new: true,
+    }
+  );
 
   return res
     .status(200)
